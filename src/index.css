@@ -35,8 +35,9 @@ body,
 
 .toolbar {
   position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 52px;
   display: flex;
   align-items: center;
@@ -235,3 +236,122 @@ body,
 }
 
 .trash-zone__icon { font-size: 18px; }
+
+/* ── Note Creator popover ───────────────────────────────────────────────── */
+
+.note-creator {
+  position: fixed;
+  width: 240px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.16),
+    0 2px 8px  rgba(0, 0, 0, 0.08);
+  z-index: 99999;
+  overflow: hidden;
+  animation: creator-pop 0.15s ease;
+}
+
+@keyframes creator-pop {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.note-creator__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: #f6f6f6;
+  border-bottom: 1px solid #ececec;
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+}
+
+.note-creator__close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #aaa;
+  padding: 0 2px;
+  transition: color 0.12s;
+}
+
+.note-creator__close:hover { color: #333; }
+
+.note-creator__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+}
+
+.note-creator__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+}
+
+.note-creator__field input {
+  width: 88px;
+  padding: 5px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: right;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.note-creator__field input:focus { border-color: #5c6bc0; }
+
+.note-creator__color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note-creator__color-label {
+  font-size: 13px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.note-creator__colors {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.note-creator__swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, transform 0.1s;
+  padding: 0;
+}
+
+.note-creator__swatch:hover   { transform: scale(1.18); }
+.note-creator__swatch--active { border-color: #333; }
+
+.note-creator__submit {
+  padding: 9px;
+  background: #5c6bc0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.note-creator__submit:hover  { background: #3949ab; }
+.note-creator__submit:active { transform: scale(0.97); }

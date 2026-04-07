@@ -3,6 +3,8 @@ import {
   useEffect,
   useRef,
   useCallback,
+  useState,
+  type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { reducer, initialState } from '../store/reducer';
 import { storage } from '../services/storage';
@@ -10,13 +12,21 @@ import { api } from '../services/api';
 import { useDragManager } from '../hooks/useDragManager';
 import { Note } from './Note';
 import { TrashZone } from './TrashZone';
-import type { Note as NoteType } from '../types';
+import { NoteCreator } from './NoteCreator';
+import type { Note as NoteType, NoteColor } from '../types';
+
+interface CreatorState {
+  visible: boolean;
+  x: number;
+  y: number;
+}
 
 export function Board() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [creator, setCreator] = useState<CreatorState>({ visible: false, x: 0, y: 0 });
 
-  const noteRefs  = useRef(new Map<string, HTMLDivElement>());
-  const trashRef  = useRef<HTMLDivElement>(null);
+  const noteRefs = useRef(new Map<string, HTMLDivElement>());
+  const trashRef = useRef<HTMLDivElement>(null);
 
   const notesRef = useRef(state.notes);
   notesRef.current = state.notes;
@@ -120,12 +130,42 @@ export function Board() {
     }
   }, []);
 
+  const handleCreateNote = useCallback(async (
+    x: number, y: number, w: number, h: number, color: NoteColor,
+  ) => {
+    const note: NoteType = {
+      id: crypto.randomUUID(),
+      x, y, width: w, height: h,
+      text: '', color, zIndex: 0,
+    };
+    dispatch({ type: 'CREATE', payload: note });
+    setCreator(c => ({ ...c, visible: false }));
+    try {
+      await api.save(note);
+    } catch {
+      dispatch({ type: 'DELETE', payload: note.id });
+    }
+  }, []);
+
+  const handleBoardClick = useCallback((e: ReactMouseEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    setCreator({ visible: true, x: e.clientX, y: e.clientY });
+  }, []);
+
+  const openCreatorCentered = useCallback(() => {
+    setCreator({
+      visible: true,
+      x: Math.round(window.innerWidth  / 2 - 110 + (Math.random() - 0.5) * 200),
+      y: Math.round(window.innerHeight / 2 - 80  + (Math.random() - 0.5) * 120),
+    });
+  }, []);
+
   return (
-    <div className="board">
+    <div className="board" onClick={handleBoardClick}>
       <header className="toolbar" onClick={e => e.stopPropagation()}>
         <span className="toolbar__title">📝 Sticky Notes</span>
         <span className="toolbar__hint">Click anywhere on the board to add a note</span>
-        <button className="toolbar__add-btn" type="button">
+        <button className="toolbar__add-btn" onClick={openCreatorCentered} type="button">
           + New Note
         </button>
       </header>
@@ -146,6 +186,15 @@ export function Board() {
       ))}
 
       <TrashZone ref={trashRef} isActive={draggingId !== null} isOver={isOverTrash} />
+
+      {creator.visible && (
+        <NoteCreator
+          x={creator.x}
+          y={creator.y}
+          onCreate={handleCreateNote}
+          onClose={() => setCreator(c => ({ ...c, visible: false }))}
+        />
+      )}
     </div>
   );
 }
