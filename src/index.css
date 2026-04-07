@@ -165,3 +165,73 @@ body,
   color: #bbb;
   font-style: italic;
 }
+
+.note--dragging {
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.22),
+    0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.note--trash-target {
+  box-shadow:
+    0 0 0 3px #ef5350,
+    0 10px 28px rgba(239, 83, 80, 0.30);
+  opacity: 0.75;
+}
+
+.note__resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: se-resize;
+  background-image:
+    linear-gradient(135deg,
+      transparent 30%, rgba(0, 0, 0, 0.18) 30%, rgba(0, 0, 0, 0.18) 45%, transparent 45%,
+      transparent 60%, rgba(0, 0, 0, 0.18) 60%, rgba(0, 0, 0, 0.18) 75%, transparent 75%
+    );
+}
+
+/* ── Trash Zone ─────────────────────────────────────────────────────────── */
+
+.trash-zone {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 28px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 2px dashed #ccc;
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  z-index: 99500;
+  opacity: 0;
+  transition:
+    opacity      0.20s ease,
+    border-color 0.15s ease,
+    background   0.15s ease,
+    color        0.15s ease;
+}
+
+.trash-zone--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.trash-zone--over {
+  border-color: #ef5350;
+  background: rgba(255, 230, 228, 0.96);
+  color: #c62828;
+}
+
+.trash-zone__icon { font-size: 18px; }
